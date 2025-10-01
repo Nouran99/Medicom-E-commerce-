@@ -11,6 +11,8 @@ import { paymentRoutes } from './routes/payment';
 import { notificationRoutes } from './routes/notifications';
 import { pageRoutes } from './routes/pages';
 import { importRoutes } from './routes/import';
+import { productsEnhancedRoutes } from './routes/products-enhanced';
+import productManagementRoutes from './routes/products-management';
 import type { Env } from './lib/supabase';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -30,13 +32,15 @@ app.use('/images/*', serveStatic({ root: './public' }));
 // API Routes
 app.route('/api/auth', authRoutes);
 app.route('/api/products', productsRoutes);
+app.route('/api/products-enhanced', productsEnhancedRoutes);
 app.route('/api/cart', cartRoutes);
 app.route('/api/orders', ordersRoutes);
 app.route('/api/admin', adminRoutes);
 app.route('/api/prescriptions', prescriptionRoutes);
 app.route('/api/payment', paymentRoutes);
 app.route('/api/notifications', notificationRoutes);
-app.route('/api/import', importRoutes);
+app.route('', importRoutes); // Mount import routes at root level
+app.route('', productManagementRoutes); // Mount product management routes at root level
 
 // Page routes
 app.route('', pageRoutes);
@@ -73,21 +77,21 @@ app.get('/', (c) => {
             <div class="flex justify-between items-center py-4">
               <!-- Logo -->
               <div class="flex items-center">
-                <img src="/static/images/logo.png" alt="Medicum Egypt" class="h-12">
+                <img src="/static/images/logo.svg" alt="Medicum Egypt" class="h-12 w-auto">
                 <span class="mr-3 text-2xl font-bold text-blue-900">Medicum Egypt</span>
               </div>
               
               <!-- Navigation Items -->
               <div class="flex items-center space-x-6 space-x-reverse">
-                <button onclick="toggleLanguage()" class="text-gray-700 hover:text-blue-900">
-                  <i class="fas fa-language text-xl"></i> EN
+                <button id="lang-toggle" onclick="toggleLanguage()" class="text-gray-700 hover:text-blue-900">
+                  <i class="fas fa-language text-xl"></i> <span data-translate="nav.language">EN</span>
                 </button>
                 <button onclick="openCart()" class="relative text-gray-700 hover:text-blue-900">
                   <i class="fas fa-shopping-cart text-xl"></i>
                   <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">0</span>
                 </button>
                 <button onclick="openAuth()" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800">
-                  <i class="fas fa-user"></i> تسجيل الدخول
+                  <i class="fas fa-user"></i> <span data-translate="nav.login">تسجيل الدخول</span>
                 </button>
               </div>
             </div>
@@ -97,8 +101,8 @@ app.get('/', (c) => {
         <!-- Hero Section -->
         <section class="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-20">
           <div class="container mx-auto px-4 text-center">
-            <h1 class="text-5xl font-bold mb-6">متجرك الطبي الموثوق</h1>
-            <p class="text-xl mb-8">احصل على جميع احتياجاتك الطبية بأفضل الأسعار مع توصيل سريع</p>
+            <h1 class="text-5xl font-bold mb-6" data-translate="hero.title">متجرك الطبي الموثوق</h1>
+            <p class="text-xl mb-8" data-translate="hero.subtitle">احصل على جميع احتياجاتك الطبية بأفضل الأسعار مع توصيل سريع</p>
             
             <!-- Search Bar -->
             <div class="max-w-2xl mx-auto">
@@ -206,6 +210,7 @@ app.get('/', (c) => {
 
         <!-- Modals and Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="/static/js/app.js"></script>
         <script>
           // Initialize app
           let currentLanguage = 'ar';

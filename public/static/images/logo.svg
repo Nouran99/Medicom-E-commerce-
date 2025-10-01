@@ -1,0 +1,26 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="60" fill="#ffffff"/>
+  
+  <!-- Medical Cross Symbol -->
+  <g transform="translate(20, 15)">
+    <!-- Circle background -->
+    <circle cx="15" cy="15" r="14" fill="#1e3a8a" opacity="0.1"/>
+    <!-- Cross -->
+    <rect x="10" y="5" width="10" height="20" fill="#1e3a8a"/>
+    <rect x="5" y="10" width="20" height="10" fill="#1e3a8a"/>
+  </g>
+  
+  <!-- Text: MEDICUM -->
+  <text x="50" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1e3a8a">
+    MEDICUM
+  </text>
+  
+  <!-- Text: EGYPT -->
+  <text x="50" y="45" font-family="Arial, sans-serif" font-size="14" fill="#3b82f6">
+    EGYPT
+  </text>
+  
+  <!-- Decorative swoosh -->
+  <path d="M 45 35 Q 90 30 150 35" stroke="#3b82f6" stroke-width="2" fill="none" opacity="0.5"/>
+</svg>

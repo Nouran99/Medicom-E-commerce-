@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Medicum Egypt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .image-thumbnail {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .image-thumbnail:hover {
+            transform: scale(1.05);
+            border-color: #1e88e5;
+        }
+        .image-thumbnail.active {
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 2px #1e88e5;
+        }
+        .zoom-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .zoom-container:hover .zoom-image {
+            transform: scale(1.5);
+        }
+        .zoom-image {
+            transition: transform 0.3s;
+            cursor: zoom-in;
+        }
+        [dir="rtl"] .ltr-only { display: none; }
+        [dir="ltr"] .rtl-only { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <img src="/static/images/logo.svg" alt="Medicum Egypt" class="h-12 w-auto">
+                    <span class="mr-3 text-2xl font-bold text-blue-900">Medicum Egypt</span>
+                </div>
+                <div class="flex items-center space-x-6 space-x-reverse">
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="text-gray-700 hover:text-blue-900">
+                        <i class="fas fa-language text-xl"></i> <span id="lang-text">EN</span>
+                    </button>
+                    <button onclick="openCart()" class="relative text-gray-700 hover:text-blue-900">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">0</span>
+                    </button>
+                    <button onclick="openAuth()" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800">
+                        <i class="fas fa-user"></i> <span id="login-text">تسجيل الدخول</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-gray-100 py-3">
+        <div class="container mx-auto px-4">
+            <nav class="text-sm">
+                <a href="/" class="text-blue-600 hover:text-blue-800">الرئيسية</a>
+                <span class="mx-2 text-gray-500">/</span>
+                <a href="/products" class="text-blue-600 hover:text-blue-800" id="category-link">المنتجات</a>
+                <span class="mx-2 text-gray-500">/</span>
+                <span class="text-gray-700" id="product-name-breadcrumb">...</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Product Images -->
+                <div>
+                    <!-- Main Image -->
+                    <div class="mb-4 zoom-container">
+                        <img id="main-image" src="/static/images/placeholder.jpg" alt="Product" 
+                             class="w-full h-96 object-contain bg-gray-100 rounded-lg zoom-image">
+                    </div>
+                    
+                    <!-- Thumbnail Images -->
+                    <div class="flex gap-2 overflow-x-auto" id="thumbnail-container">
+                        <!-- Thumbnails will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Product Information -->
+                <div>
+                    <!-- Badge for prescription/controlled -->
+                    <div class="flex gap-2 mb-4" id="badges-container">
+                        <!-- Badges will be loaded here -->
+                    </div>
+
+                    <!-- Product Name and Code -->
+                    <h1 class="text-3xl font-bold mb-2" id="product-name">جاري التحميل...</h1>
+                    <p class="text-gray-500 text-sm mb-4">
+                        كود المنتج: <span id="product-code" class="font-mono">...</span>
+                    </p>
+
+                    <!-- Price Section -->
+                    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                        <div class="flex items-baseline gap-3">
+                            <span class="text-3xl font-bold text-blue-900" id="product-price">0.00</span>
+                            <span class="text-gray-600">جنيه مصري</span>
+                            <span id="discount-badge" class="hidden bg-red-500 text-white px-2 py-1 rounded text-sm">
+                                خصم <span id="discount-percent">0</span>%
+                            </span>
+                        </div>
+                        <div id="original-price-container" class="hidden mt-2">
+                            <span class="text-gray-500 line-through" id="original-price">0.00</span>
+                            <span class="text-gray-500">جنيه</span>
+                        </div>
+                    </div>
+
+                    <!-- Stock Status -->
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-700">التوفر:</span>
+                            <span id="stock-status" class="font-semibold">...</span>
+                        </div>
+                        <div id="low-stock-warning" class="hidden mt-2 text-red-600 text-sm">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            متبقي <span id="stock-count">0</span> قطعة فقط!
+                        </div>
+                    </div>
+
+                    <!-- Active Ingredient (if applicable) -->
+                    <div id="active-ingredient-section" class="hidden mb-6">
+                        <h3 class="font-semibold mb-2">المادة الفعالة:</h3>
+                        <p id="active-ingredient" class="text-gray-700">...</p>
+                    </div>
+
+                    <!-- Add to Cart Section -->
+                    <div class="border-t pt-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <label class="text-gray-700">الكمية:</label>
+                            <div class="flex items-center border rounded-lg">
+                                <button onclick="decreaseQuantity()" class="px-3 py-2 hover:bg-gray-100">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="quantity" value="1" min="1" 
+                                       class="w-16 text-center border-x focus:outline-none">
+                                <button onclick="increaseQuantity()" class="px-3 py-2 hover:bg-gray-100">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button id="add-to-cart-btn" onclick="addToCart()" 
+                                class="w-full bg-blue-900 text-white py-3 rounded-lg hover:bg-blue-800 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-cart-plus"></i>
+                            <span>أضف إلى السلة</span>
+                        </button>
+
+                        <div id="prescription-notice" class="hidden mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p class="text-yellow-800">
+                                <i class="fas fa-prescription"></i>
+                                هذا المنتج يتطلب روشتة طبية. سيتم مراجعة الروشتة قبل تأكيد الطلب.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Information -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-truck text-green-600"></i>
+                            <span class="font-semibold">معلومات التوصيل:</span>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>التوصيل خلال <span id="delivery-days">1-3</span> أيام عمل</li>
+                            <li>رسوم التوصيل: <span id="delivery-fee">30</span> جنيه</li>
+                            <li id="free-delivery-info" class="hidden">
+                                توصيل مجاني للطلبات أكثر من <span id="free-delivery-threshold">200</span> جنيه
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details Tabs -->
+            <div class="mt-8">
+                <div class="border-b">
+                    <nav class="flex gap-8">
+                        <button onclick="switchTab('description')" class="tab-btn py-3 border-b-2 border-blue-600 text-blue-600 font-semibold" data-tab="description">
+                            الوصف
+                        </button>
+                        <button onclick="switchTab('usage')" class="tab-btn py-3 border-b-2 border-transparent hover:text-blue-600" data-tab="usage">
+                            طريقة الاستخدام
+                        </button>
+                        <button onclick="switchTab('warnings')" class="tab-btn py-3 border-b-2 border-transparent hover:text-blue-600" data-tab="warnings">
+                            التحذيرات
+                        </button>
+                        <button onclick="switchTab('specifications')" class="tab-btn py-3 border-b-2 border-transparent hover:text-blue-600" data-tab="specifications">
+                            المواصفات
+                        </button>
+                    </nav>
+                </div>
+
+                <div class="py-6">
+                    <!-- Description Tab -->
+                    <div id="description-tab" class="tab-content">
+                        <h3 class="text-xl font-semibold mb-3">وصف المنتج</h3>
+                        <p id="product-description" class="text-gray-700 leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Usage Tab -->
+                    <div id="usage-tab" class="tab-content hidden">
+                        <h3 class="text-xl font-semibold mb-3">طريقة الاستخدام</h3>
+                        <div id="dosage-info" class="space-y-3">
+                            <div id="dosage-form-section" class="hidden">
+                                <span class="font-semibold">الشكل الدوائي:</span>
+                                <span id="dosage-form" class="text-gray-700">...</span>
+                            </div>
+                            <p class="text-gray-700">يرجى اتباع تعليمات الطبيب أو الصيدلي.</p>
+                        </div>
+                    </div>
+
+                    <!-- Warnings Tab -->
+                    <div id="warnings-tab" class="tab-content hidden">
+                        <h3 class="text-xl font-semibold mb-3">التحذيرات والآثار الجانبية</h3>
+                        <div class="space-y-4">
+                            <div id="side-effects-section" class="hidden">
+                                <h4 class="font-semibold mb-2">الآثار الجانبية المحتملة:</h4>
+                                <p id="side-effects" class="text-gray-700">...</p>
+                            </div>
+                            <div id="contraindications-section" class="hidden">
+                                <h4 class="font-semibold mb-2">موانع الاستخدام:</h4>
+                                <p id="contraindications" class="text-gray-700">...</p>
+                            </div>
+                            <div id="storage-section" class="hidden">
+                                <h4 class="font-semibold mb-2">ظروف التخزين:</h4>
+                                <p id="storage-conditions" class="text-gray-700">...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Specifications Tab -->
+                    <div id="specifications-tab" class="tab-content hidden">
+                        <h3 class="text-xl font-semibold mb-3">المواصفات</h3>
+                        <table class="w-full">
+                            <tbody id="specifications-table" class="divide-y">
+                                <!-- Specifications will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold mb-6">منتجات ذات صلة</h2>
+                <div id="related-products" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Related products will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Medicum Egypt. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+    <script src="/static/js/product-details.js"></script>
+</body>
+</html>
