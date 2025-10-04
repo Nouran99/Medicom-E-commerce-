@@ -18,12 +18,15 @@ import type { Env } from './lib/supabase';
 const app = new Hono<{ Bindings: Env }>();
 
 // Enable CORS for all API routes
-app.use('/api/*', cors({
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
+app.use(
+  '/api/*',
+  cors({
+    origin: '*',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
 
 // Serve static files
 app.use('/static/*', serveStatic({ root: './public' }));
@@ -46,16 +49,16 @@ app.route('', productManagementRoutes); // Mount product management routes at ro
 app.route('', pageRoutes);
 
 // Health check endpoint
-app.get('/api/health', (c) => {
-  return c.json({ 
-    status: 'healthy', 
+app.get('/api/health', c => {
+  return c.json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
-    environment: c.env.ENVIRONMENT || 'development'
+    environment: c.env.ENVIRONMENT || 'development',
   });
 });
 
 // Main HTML route - E-commerce website
-app.get('/', (c) => {
+app.get('/', c => {
   return c.html(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
@@ -348,7 +351,7 @@ app.get('/', (c) => {
 });
 
 // Admin Dashboard
-app.get('/admin', (c) => {
+app.get('/admin', c => {
   return c.html(`
     <!DOCTYPE html>
     <html lang="en">

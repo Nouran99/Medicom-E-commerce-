@@ -1,0 +1,29 @@
+name = "medicum-egypt"
+compatibility_date = "2025-09-25"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+[env.development]
+name = "medicum-egypt-dev"
+
+[env.staging]
+name = "medicum-egypt-staging"
+
+[env.production]
+name = "medicum-egypt-prod"
+
+# Environment variables (set these in Cloudflare dashboard)
+# SUPABASE_URL
+# SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_KEY
+# JWT_SECRET
+# TWILIO_ACCOUNT_SID
+# TWILIO_AUTH_TOKEN
+# TWILIO_PHONE_NUMBER
+# TWILIO_WHATSAPP_NUMBER
+# FAWRY_MERCHANT_CODE
+# FAWRY_SECRET_KEY
+# FAWRY_SANDBOX_URL
+# APP_URL
+# ADMIN_EMAIL
+# ENVIRONMENT

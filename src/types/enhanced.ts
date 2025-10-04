@@ -42,46 +42,46 @@ export interface ProductSpecs {
 
 export interface ProductEnhanced {
   id: string;
-  
+
   // Basic Information
   product_code: string;
   name_en: string;
   name_ar: string;
-  
+
   // Pricing
   price_per_unit: number;
   currency: string;
-  
+
   // Images
   product_images: ProductImage[];
-  
+
   // Specifications
   product_specs: ProductSpecs;
   active_ingredient?: string;
   side_effects?: string;
-  
+
   // Seller
   seller_id: string;
   seller?: Seller;
-  
+
   // Delivery
   delivery_method: ('courier' | 'pickup')[];
   delivery_days_min: number;
   delivery_days_max: number;
   delivery_cost: number;
   free_delivery_threshold?: number;
-  
+
   // Quantity
   minimum_quantity: number;
   maximum_quantity?: number;
   unit_item: string; // piece, box, strip, bottle, packet
   units_per_pack: number;
-  
+
   // Stock
   in_stock: boolean;
   quantity_available: number;
   stock_alert_level: number;
-  
+
   // Medical Information
   prescription_required: boolean;
   controlled_substance: boolean;
@@ -90,35 +90,35 @@ export interface ProductEnhanced {
   batch_number?: string;
   manufacturer?: string;
   country_of_origin?: string;
-  
+
   // Extra Information
   extra_information?: any;
   usage_instructions_en?: string;
   usage_instructions_ar?: string;
   warnings_en?: string;
   warnings_ar?: string;
-  
+
   // Categorization
   category_id: string;
   subcategory?: string;
   tags?: string[];
-  
+
   // SEO
   meta_title_en?: string;
   meta_title_ar?: string;
   meta_description_en?: string;
   meta_description_ar?: string;
   search_keywords?: string[];
-  
+
   // Analytics
   view_count: number;
   purchase_count: number;
-  
+
   // Status
   status: 'active' | 'inactive' | 'draft' | 'out_of_stock';
   featured: boolean;
   promotion_text?: string;
-  
+
   // Timestamps
   created_at: Date;
   updated_at: Date;

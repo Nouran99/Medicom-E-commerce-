@@ -82,7 +82,7 @@ export interface Order {
   updated_at: Date;
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'pending'
   | 'confirmed'
   | 'prescription_review'

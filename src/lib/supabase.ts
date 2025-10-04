@@ -21,21 +21,21 @@ export interface Env {
 export function getSupabaseClient(c: Context<{ Bindings: Env }>) {
   const supabaseUrl = c.env.SUPABASE_URL;
   const supabaseKey = c.env.SUPABASE_ANON_KEY;
-  
+
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Supabase configuration missing');
   }
-  
+
   return createClient(supabaseUrl, supabaseKey);
 }
 
 export function getSupabaseAdmin(c: Context<{ Bindings: Env }>) {
   const supabaseUrl = c.env.SUPABASE_URL;
   const supabaseServiceKey = c.env.SUPABASE_SERVICE_KEY;
-  
+
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error('Supabase admin configuration missing');
   }
-  
+
   return createClient(supabaseUrl, supabaseServiceKey);
 }

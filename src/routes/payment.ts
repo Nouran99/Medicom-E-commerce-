@@ -6,13 +6,13 @@ import { createHash } from 'crypto';
 export const paymentRoutes = new Hono<{ Bindings: Env }>();
 
 // Process payment
-paymentRoutes.post('/process', jwtAuth, async (c) => {
+paymentRoutes.post('/process', jwtAuth, async c => {
   try {
     const payload = c.get('jwtPayload');
     const { order_id, payment_method } = await c.req.json();
-    
+
     const supabase = getSupabaseAdmin(c);
-    
+
     // Get order details
     const { data: order, error } = await supabase
       .from('orders')
@@ -20,14 +20,14 @@ paymentRoutes.post('/process', jwtAuth, async (c) => {
       .eq('id', order_id)
       .eq('user_id', payload.sub)
       .single();
-    
+
     if (error || !order) {
       return c.json({ error: 'Order not found' }, 404);
     }
-    
+
     // Handle different payment methods
     let paymentResult;
-    
+
     switch (payment_method) {
       case 'cod':
         // Cash on delivery - no immediate payment
@@ -37,12 +37,12 @@ paymentRoutes.post('/process', jwtAuth, async (c) => {
           status: 'pending',
         };
         break;
-        
+
       case 'fawry':
         // Fawry payment integration
         paymentResult = await processFawryPayment(c, order);
         break;
-        
+
       case 'card':
         // Card payment would be integrated here
         paymentResult = {
@@ -51,7 +51,7 @@ paymentRoutes.post('/process', jwtAuth, async (c) => {
           status: 'paid',
         };
         break;
-        
+
       case 'wallet':
         // E-wallet payment
         paymentResult = {
@@ -60,11 +60,11 @@ paymentRoutes.post('/process', jwtAuth, async (c) => {
           status: 'paid',
         };
         break;
-        
+
       default:
         return c.json({ error: 'Invalid payment method' }, 400);
     }
-    
+
     if (paymentResult.success) {
       // Update order payment status
       await supabase
@@ -76,7 +76,7 @@ paymentRoutes.post('/process', jwtAuth, async (c) => {
         })
         .eq('id', order_id);
     }
-    
+
     return c.json(paymentResult);
   } catch (error) {
     console.error('Payment processing error:', error);
@@ -90,7 +90,7 @@ async function processFawryPayment(c: Context<{ Bindings: Env }>, order: any) {
     const merchantCode = c.env.FAWRY_MERCHANT_CODE;
     const secretKey = c.env.FAWRY_SECRET_KEY;
     const sandboxUrl = c.env.FAWRY_SANDBOX_URL;
-    
+
     // Prepare Fawry payment request
     const paymentData = {
       merchantCode,
@@ -110,12 +110,12 @@ async function processFawryPayment(c: Context<{ Bindings: Env }>, order: any) {
         },
       ],
     };
-    
+
     // Generate signature (simplified for demo)
     const signature = createHash('sha256')
       .update(`${merchantCode}${order.order_number}${order.total}${secretKey}`)
       .digest('hex');
-    
+
     // In production, make actual API call to Fawry
     // For demo, return mock response
     return {
@@ -135,11 +135,11 @@ async function processFawryPayment(c: Context<{ Bindings: Env }>, order: any) {
 }
 
 // Payment callback/webhook
-paymentRoutes.post('/webhook/:provider', async (c) => {
+paymentRoutes.post('/webhook/:provider', async c => {
   try {
     const provider = c.req.param('provider');
     const body = await c.req.json();
-    
+
     // Handle webhook based on provider
     switch (provider) {
       case 'fawry':
@@ -151,7 +151,7 @@ paymentRoutes.post('/webhook/:provider', async (c) => {
       default:
         return c.json({ error: 'Unknown provider' }, 400);
     }
-    
+
     return c.json({ success: true });
   } catch (error) {
     return c.json({ error: 'Webhook processing failed' }, 500);

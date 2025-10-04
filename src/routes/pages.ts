@@ -4,7 +4,7 @@ import type { Env } from '../lib/supabase';
 export const pageRoutes = new Hono<{ Bindings: Env }>();
 
 // Login Page
-pageRoutes.get('/login', (c) => {
+pageRoutes.get('/login', c => {
   return c.html(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
@@ -122,7 +122,7 @@ pageRoutes.get('/login', (c) => {
 });
 
 // Cart Page
-pageRoutes.get('/cart', (c) => {
+pageRoutes.get('/cart', c => {
   return c.html(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
@@ -266,7 +266,7 @@ pageRoutes.get('/cart', (c) => {
 });
 
 // Checkout Page
-pageRoutes.get('/checkout', (c) => {
+pageRoutes.get('/checkout', c => {
   return c.html(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">

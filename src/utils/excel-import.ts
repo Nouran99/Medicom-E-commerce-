@@ -75,11 +75,18 @@ export interface ImportResult {
 export class ExcelImporter {
   private supabase: any;
   private validCategories = [
-    'pain-relief', 'antibiotics', 'vitamins', 'diabetes-care', 
-    'digestive-health', 'allergy-relief', 'respiratory', 
-    'mental-health', 'first-aid', 'personal-care'
+    'pain-relief',
+    'antibiotics',
+    'vitamins',
+    'diabetes-care',
+    'digestive-health',
+    'allergy-relief',
+    'respiratory',
+    'mental-health',
+    'first-aid',
+    'personal-care',
   ];
-  
+
   private validDeliveryMethods = ['standard', 'express', 'special'];
   private validCurrencies = ['EGP', 'USD'];
 
@@ -92,7 +99,7 @@ export class ExcelImporter {
    */
   async parseExcelData(data: any[]): Promise<ProductImportData[]> {
     const products: ProductImportData[] = [];
-    
+
     for (const row of data) {
       const product: ProductImportData = {
         product_code: row.product_code || '',
@@ -142,12 +149,12 @@ export class ExcelImporter {
         is_featured: this.parseBoolean(row.is_featured),
         is_active: this.parseBoolean(row.is_active),
         weight_grams: parseInt(row.weight_grams) || null,
-        dimensions_cm: row.dimensions_cm || null
+        dimensions_cm: row.dimensions_cm || null,
       };
-      
+
       products.push(product);
     }
-    
+
     return products;
   }
 
@@ -157,149 +164,155 @@ export class ExcelImporter {
   async validateProducts(products: ProductImportData[]): Promise<ValidationError[]> {
     const errors: ValidationError[] = [];
     const productCodes = new Set<string>();
-    
+
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
       const rowNum = i + 2; // Excel row number (accounting for header)
-      
+
       // Required field validation
       if (!product.product_code) {
         errors.push({
           row: rowNum,
           field: 'product_code',
           value: product.product_code,
-          message: 'Product code is required'
+          message: 'Product code is required',
         });
       }
-      
+
       // Check for duplicate product codes
       if (product.product_code && productCodes.has(product.product_code)) {
         errors.push({
           row: rowNum,
           field: 'product_code',
           value: product.product_code,
-          message: 'Duplicate product code found'
+          message: 'Duplicate product code found',
         });
       }
       productCodes.add(product.product_code);
-      
+
       // Required fields
       if (!product.name_en) {
         errors.push({
           row: rowNum,
           field: 'name_en',
           value: product.name_en,
-          message: 'English name is required'
+          message: 'English name is required',
         });
       }
-      
+
       if (!product.name_ar) {
         errors.push({
           row: rowNum,
           field: 'name_ar',
           value: product.name_ar,
-          message: 'Arabic name is required'
+          message: 'Arabic name is required',
         });
       }
-      
+
       if (!product.price_per_unit || product.price_per_unit <= 0) {
         errors.push({
           row: rowNum,
           field: 'price_per_unit',
           value: product.price_per_unit,
-          message: 'Price must be greater than 0'
+          message: 'Price must be greater than 0',
         });
       }
-      
+
       if (!product.seller_code) {
         errors.push({
           row: rowNum,
           field: 'seller_code',
           value: product.seller_code,
-          message: 'Seller code is required'
+          message: 'Seller code is required',
         });
       }
-      
+
       // Category validation
       if (product.category && !this.validCategories.includes(product.category)) {
         errors.push({
           row: rowNum,
           field: 'category',
           value: product.category,
-          message: `Invalid category. Must be one of: ${this.validCategories.join(', ')}`
+          message: `Invalid category. Must be one of: ${this.validCategories.join(', ')}`,
         });
       }
-      
+
       // Delivery method validation
       if (product.delivery_method && !this.validDeliveryMethods.includes(product.delivery_method)) {
         errors.push({
           row: rowNum,
           field: 'delivery_method',
           value: product.delivery_method,
-          message: `Invalid delivery method. Must be one of: ${this.validDeliveryMethods.join(', ')}`
+          message: `Invalid delivery method. Must be one of: ${this.validDeliveryMethods.join(', ')}`,
         });
       }
-      
+
       // Currency validation
       if (product.currency && !this.validCurrencies.includes(product.currency)) {
         errors.push({
           row: rowNum,
           field: 'currency',
           value: product.currency,
-          message: `Invalid currency. Must be one of: ${this.validCurrencies.join(', ')}`
+          message: `Invalid currency. Must be one of: ${this.validCurrencies.join(', ')}`,
         });
       }
-      
+
       // Stock validation
       if (product.stock_quantity < 0) {
         errors.push({
           row: rowNum,
           field: 'stock_quantity',
           value: product.stock_quantity,
-          message: 'Stock quantity cannot be negative'
+          message: 'Stock quantity cannot be negative',
         });
       }
-      
+
       // Order quantity validation
-      if (product.min_order_quantity && product.max_order_quantity && 
-          product.min_order_quantity > product.max_order_quantity) {
+      if (
+        product.min_order_quantity &&
+        product.max_order_quantity &&
+        product.min_order_quantity > product.max_order_quantity
+      ) {
         errors.push({
           row: rowNum,
           field: 'min_order_quantity',
           value: product.min_order_quantity,
-          message: 'Minimum order quantity cannot be greater than maximum'
+          message: 'Minimum order quantity cannot be greater than maximum',
         });
       }
-      
+
       // Delivery days validation
       if (product.delivery_days_min > product.delivery_days_max) {
         errors.push({
           row: rowNum,
           field: 'delivery_days_min',
           value: product.delivery_days_min,
-          message: 'Minimum delivery days cannot be greater than maximum'
+          message: 'Minimum delivery days cannot be greater than maximum',
         });
       }
-      
+
       // Percentage validation
-      if (product.discount_percentage && (product.discount_percentage < 0 || product.discount_percentage > 100)) {
+      if (
+        product.discount_percentage &&
+        (product.discount_percentage < 0 || product.discount_percentage > 100)
+      ) {
         errors.push({
           row: rowNum,
           field: 'discount_percentage',
           value: product.discount_percentage,
-          message: 'Discount percentage must be between 0 and 100'
+          message: 'Discount percentage must be between 0 and 100',
         });
       }
-      
+
       if (product.tax_percentage && (product.tax_percentage < 0 || product.tax_percentage > 100)) {
         errors.push({
           row: rowNum,
           field: 'tax_percentage',
           value: product.tax_percentage,
-          message: 'Tax percentage must be between 0 and 100'
+          message: 'Tax percentage must be between 0 and 100',
         });
       }
-      
+
       // JSON validation
       try {
         if (product.product_images) {
@@ -310,10 +323,10 @@ export class ExcelImporter {
           row: rowNum,
           field: 'product_images',
           value: product.product_images,
-          message: 'Invalid JSON format for product images'
+          message: 'Invalid JSON format for product images',
         });
       }
-      
+
       try {
         if (product.specifications) {
           JSON.parse(product.specifications);
@@ -323,21 +336,21 @@ export class ExcelImporter {
           row: rowNum,
           field: 'specifications',
           value: product.specifications,
-          message: 'Invalid JSON format for specifications'
+          message: 'Invalid JSON format for specifications',
         });
       }
-      
+
       // Date validation
       if (product.expiry_date && !this.isValidDate(product.expiry_date)) {
         errors.push({
           row: rowNum,
           field: 'expiry_date',
           value: product.expiry_date,
-          message: 'Invalid date format. Use YYYY-MM-DD'
+          message: 'Invalid date format. Use YYYY-MM-DD',
         });
       }
     }
-    
+
     // Check seller codes exist
     const uniqueSellerCodes = [...new Set(products.map(p => p.seller_code).filter(Boolean))];
     if (uniqueSellerCodes.length > 0) {
@@ -345,25 +358,25 @@ export class ExcelImporter {
         .from('sellers')
         .select('seller_code')
         .in('seller_code', uniqueSellerCodes);
-      
+
       if (error) {
         console.error('Error checking sellers:', error);
       } else {
         const existingSellerCodes = new Set(sellers?.map((s: any) => s.seller_code) || []);
-        
+
         products.forEach((product, index) => {
           if (product.seller_code && !existingSellerCodes.has(product.seller_code)) {
             errors.push({
               row: index + 2,
               field: 'seller_code',
               value: product.seller_code,
-              message: `Seller code '${product.seller_code}' does not exist in the system`
+              message: `Seller code '${product.seller_code}' does not exist in the system`,
             });
           }
         });
       }
     }
-    
+
     // Check for existing product codes in database
     const productCodesList = products.map(p => p.product_code).filter(Boolean);
     if (productCodesList.length > 0) {
@@ -371,23 +384,23 @@ export class ExcelImporter {
         .from('products_enhanced')
         .select('product_code')
         .in('product_code', productCodesList);
-      
+
       if (!error && existingProducts && existingProducts.length > 0) {
         const existingCodes = new Set(existingProducts.map((p: any) => p.product_code));
-        
+
         products.forEach((product, index) => {
           if (product.product_code && existingCodes.has(product.product_code)) {
             errors.push({
               row: index + 2,
               field: 'product_code',
               value: product.product_code,
-              message: `Product code '${product.product_code}' already exists in the database`
+              message: `Product code '${product.product_code}' already exists in the database`,
             });
           }
         });
       }
     }
-    
+
     return errors;
   }
 
@@ -401,26 +414,26 @@ export class ExcelImporter {
       successCount: 0,
       errorCount: 0,
       errors: [],
-      importedProducts: []
+      importedProducts: [],
     };
-    
+
     // Validate first
     const validationErrors = await this.validateProducts(products);
-    
+
     if (validationErrors.length > 0) {
       result.errors = validationErrors;
       result.errorCount = validationErrors.length;
       return result;
     }
-    
+
     // Process imports in batches
     const batchSize = 10;
     const batches = [];
-    
+
     for (let i = 0; i < products.length; i += batchSize) {
       batches.push(products.slice(i, i + batchSize));
     }
-    
+
     for (const batch of batches) {
       try {
         // Get seller IDs
@@ -429,9 +442,9 @@ export class ExcelImporter {
           .from('sellers')
           .select('id, seller_code')
           .in('seller_code', sellerCodes);
-        
+
         const sellerMap = new Map(sellers?.map((s: any) => [s.seller_code, s.id]) || []);
-        
+
         // Prepare data for insertion
         const insertData = batch.map(product => ({
           product_code: product.product_code,
@@ -483,41 +496,40 @@ export class ExcelImporter {
           weight_grams: product.weight_grams,
           dimensions_cm: product.dimensions_cm,
           stock_alert_level: 10, // Default value
-          import_date: new Date().toISOString()
+          import_date: new Date().toISOString(),
         }));
-        
+
         // Insert batch into database
         const { data, error } = await this.supabase
           .from('products_enhanced')
           .insert(insertData)
           .select();
-        
+
         if (error) {
           console.error('Import error:', error);
           result.errors.push({
             row: 0,
             field: 'database',
             value: '',
-            message: `Database error: ${error.message}`
+            message: `Database error: ${error.message}`,
           });
           result.errorCount++;
         } else {
           result.successCount += data.length;
           result.importedProducts?.push(...batch);
         }
-        
       } catch (error: any) {
         console.error('Batch import error:', error);
         result.errors.push({
           row: 0,
           field: 'system',
           value: '',
-          message: `System error: ${error.message}`
+          message: `System error: ${error.message}`,
         });
         result.errorCount++;
       }
     }
-    
+
     result.success = result.successCount > 0;
     return result;
   }
@@ -538,18 +550,18 @@ export class ExcelImporter {
    */
   private parseDate(value: any): string | null {
     if (!value) return null;
-    
+
     // If it's already a valid date string, return it
     if (typeof value === 'string' && this.isValidDate(value)) {
       return value;
     }
-    
+
     // Try to parse Excel serial date
     if (typeof value === 'number') {
       const date = new Date((value - 25569) * 86400 * 1000);
       return date.toISOString().split('T')[0];
     }
-    
+
     return null;
   }
 
@@ -559,7 +571,7 @@ export class ExcelImporter {
   private isValidDate(dateString: string): boolean {
     const regex = /^\d{4}-\d{2}-\d{2}$/;
     if (!regex.test(dateString)) return false;
-    
+
     const date = new Date(dateString);
     return date instanceof Date && !isNaN(date.getTime());
   }
@@ -573,25 +585,25 @@ export class ExcelImporter {
     report += `Total Rows Processed: ${result.totalRows}\n`;
     report += `Successfully Imported: ${result.successCount}\n`;
     report += `Errors: ${result.errorCount}\n\n`;
-    
+
     if (result.errors.length > 0) {
       report += `Validation Errors:\n`;
       report += `-----------------\n`;
-      
+
       result.errors.forEach(error => {
         report += `Row ${error.row}: ${error.field} - ${error.message}\n`;
       });
     }
-    
+
     if (result.importedProducts && result.importedProducts.length > 0) {
       report += `\nImported Products:\n`;
       report += `-----------------\n`;
-      
+
       result.importedProducts.forEach(product => {
         report += `✓ ${product.product_code}: ${product.name_en}\n`;
       });
     }
-    
+
     return report;
   }
 }
