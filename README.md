@@ -90,17 +90,28 @@
 
 ## 🚀 Deployment
 
-### Local Development
+### Local Development Setup
+
+**⚠️ IMPORTANT: You must create a `.dev.vars` file before running locally!**
+
+See the complete setup guide: **[DEV_SETUP_GUIDE.md](./DEV_SETUP_GUIDE.md)**
+
+Quick start:
 ```bash
-# Install dependencies
+# 1. Install dependencies
 npm install
 
-# Run development server
-npm run dev:sandbox
+# 2. Create .dev.vars file with environment variables (see DEV_SETUP_GUIDE.md)
+# This file contains SUPABASE_URL, SUPABASE_ANON_KEY, JWT_SECRET, etc.
 
-# Build for production
+# 3. Build the application
 npm run build
+
+# 4. Run development server
+npm run dev:sandbox
 ```
+
+**Note:** Due to Cloudflare Workers local development limitations, external API calls may not work locally. Deploy to Cloudflare Pages for full testing.
 
 ### Production Deployment (Cloudflare Pages)
 ```bash
@@ -109,18 +120,36 @@ npm run deploy:prod
 ```
 
 ### Environment Variables Required
-```
+
+Create a `.dev.vars` file in the project root with these variables:
+
+```env
+# Supabase (REQUIRED)
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_KEY=your_supabase_service_key
+
+# JWT Secret (REQUIRED)
+JWT_SECRET=your_jwt_secret_min_32_chars
+
+# Twilio SMS/WhatsApp (Optional for local dev)
 TWILIO_ACCOUNT_SID=your_twilio_account_sid
 TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_PHONE_NUMBER=your_twilio_phone_number
 TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+
+# Fawry Payment (Optional for local dev)
 FAWRY_MERCHANT_CODE=your_fawry_merchant_code
 FAWRY_SECRET_KEY=your_fawry_secret_key
-JWT_SECRET=your_jwt_secret
+FAWRY_SANDBOX_URL=https://atfawry.fawrystaging.com
+
+# App Configuration
+APP_URL=http://localhost:3000
+ADMIN_EMAIL=admin@medicumegypt.com
+ENVIRONMENT=development
 ```
+
+**📖 For detailed setup instructions, troubleshooting, and best practices, see [DEV_SETUP_GUIDE.md](./DEV_SETUP_GUIDE.md)**
 
 ## 📱 User Guide
 
