@@ -107,7 +107,7 @@ app.get('/', (c) => {
             <!-- Search Bar -->
             <div class="max-w-2xl mx-auto">
               <div class="relative">
-                <input type="text" id="search-input" placeholder="ابحث عن المنتجات الطبية..." 
+                <input type="text" id="search-input" placeholder="ابحث عن المنتجات الطبية..." data-translate="hero.search"
                   class="w-full px-6 py-4 rounded-full text-gray-800 text-lg pr-14">
                 <button onclick="searchProducts()" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-900 text-white px-6 py-2 rounded-full hover:bg-blue-800">
                   <i class="fas fa-search"></i>
@@ -130,7 +130,7 @@ app.get('/', (c) => {
         <!-- Featured Products -->
         <section class="py-12 bg-white">
           <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">المنتجات المميزة</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center" data-translate="products.title">المنتجات المميزة</h2>
             <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               <!-- Products will be loaded here -->
             </div>
@@ -145,22 +145,22 @@ app.get('/', (c) => {
                 <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <i class="fas fa-truck text-3xl text-blue-900"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-2">توصيل سريع</h3>
-                <p class="text-gray-600">توصيل خلال 24-48 ساعة في القاهرة والجيزة</p>
+                <h3 class="text-xl font-bold mb-2" data-translate="features.delivery.title">توصيل سريع</h3>
+                <p class="text-gray-600" data-translate="features.delivery.desc">توصيل خلال 24-48 ساعة في القاهرة والجيزة</p>
               </div>
               <div class="text-center">
                 <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <i class="fas fa-shield-alt text-3xl text-green-900"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-2">منتجات أصلية</h3>
-                <p class="text-gray-600">جميع المنتجات أصلية 100% ومعتمدة</p>
+                <h3 class="text-xl font-bold mb-2" data-translate="features.authentic.title">منتجات أصلية</h3>
+                <p class="text-gray-600" data-translate="features.authentic.desc">جميع المنتجات أصلية 100% ومعتمدة</p>
               </div>
               <div class="text-center">
                 <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <i class="fas fa-headset text-3xl text-purple-900"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-2">دعم متواصل</h3>
-                <p class="text-gray-600">فريق دعم متاح على مدار الساعة</p>
+                <h3 class="text-xl font-bold mb-2" data-translate="features.support.title">دعم متواصل</h3>
+                <p class="text-gray-600" data-translate="features.support.desc">فريق دعم متاح على مدار الساعة</p>
               </div>
             </div>
           </div>
@@ -171,29 +171,29 @@ app.get('/', (c) => {
           <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
-                <h4 class="text-xl font-bold mb-4">Medicum Egypt</h4>
-                <p class="text-gray-400">متجرك الطبي الموثوق لجميع احتياجاتك الصحية</p>
+                <h4 class="text-xl font-bold mb-4" data-translate="footer.company">Medicum Egypt</h4>
+                <p class="text-gray-400" data-translate="footer.tagline">متجرك الطبي الموثوق لجميع احتياجاتك الصحية</p>
               </div>
               <div>
-                <h4 class="text-xl font-bold mb-4">روابط سريعة</h4>
+                <h4 class="text-xl font-bold mb-4" data-translate="footer.quickLinks">روابط سريعة</h4>
                 <ul class="space-y-2">
-                  <li><a href="#" class="text-gray-400 hover:text-white">عن الشركة</a></li>
-                  <li><a href="#" class="text-gray-400 hover:text-white">اتصل بنا</a></li>
-                  <li><a href="#" class="text-gray-400 hover:text-white">سياسة الخصوصية</a></li>
-                  <li><a href="#" class="text-gray-400 hover:text-white">الشروط والأحكام</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.about">عن الشركة</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.contact">اتصل بنا</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.privacy">سياسة الخصوصية</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.terms">الشروط والأحكام</a></li>
                 </ul>
               </div>
               <div>
-                <h4 class="text-xl font-bold mb-4">خدمة العملاء</h4>
+                <h4 class="text-xl font-bold mb-4" data-translate="footer.customerService">خدمة العملاء</h4>
                 <ul class="space-y-2">
-                  <li><a href="#" class="text-gray-400 hover:text-white">سياسة الإرجاع</a></li>
-                  <li><a href="#" class="text-gray-400 hover:text-white">طرق الدفع</a></li>
-                  <li><a href="#" class="text-gray-400 hover:text-white">التوصيل والشحن</a></li>
-                  <li><a href="#" class="text-gray-400 hover:text-white">الأسئلة الشائعة</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.returns">سياسة الإرجاع</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.payment">طرق الدفع</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.shipping">التوصيل والشحن</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white" data-translate="footer.faq">الأسئلة الشائعة</a></li>
                 </ul>
               </div>
               <div>
-                <h4 class="text-xl font-bold mb-4">تابعنا</h4>
+                <h4 class="text-xl font-bold mb-4" data-translate="footer.followUs">تابعنا</h4>
                 <div class="flex space-x-4 space-x-reverse">
                   <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-facebook"></i></a>
                   <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
@@ -203,7 +203,7 @@ app.get('/', (c) => {
               </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2025 Medicum Egypt. جميع الحقوق محفوظة.</p>
+              <p>&copy; 2025 <span data-translate="footer.company">Medicum Egypt</span>. <span data-translate="footer.copyright">جميع الحقوق محفوظة.</span></p>
             </div>
           </div>
         </footer>
@@ -216,6 +216,91 @@ app.get('/', (c) => {
           let currentLanguage = 'ar';
           let cart = [];
           let user = null;
+
+          // Translation dictionary
+          const translations = {
+            ar: {
+              'nav.language': 'EN',
+              'nav.login': 'تسجيل الدخول',
+              'hero.title': 'متجرك الطبي الموثوق',
+              'hero.subtitle': 'احصل على جميع احتياجاتك الطبية بأفضل الأسعار مع توصيل سريع',
+              'hero.search': 'ابحث عن المنتجات الطبية...',
+              'categories.title': 'الفئات الرئيسية',
+              'products.title': 'المنتجات المميزة',
+              'products.addToCart': 'أضف للسلة',
+              'products.requiresRx': 'يتطلب روشتة',
+              'products.egp': 'جنيه',
+              'features.delivery.title': 'توصيل سريع',
+              'features.delivery.desc': 'توصيل خلال 24-48 ساعة في القاهرة والجيزة',
+              'features.authentic.title': 'منتجات أصلية',
+              'features.authentic.desc': 'جميع المنتجات أصلية 100% ومعتمدة',
+              'features.support.title': 'دعم متواصل',
+              'features.support.desc': 'فريق دعم متاح على مدار الساعة',
+              'footer.company': 'Medicum Egypt',
+              'footer.tagline': 'متجرك الطبي الموثوق لجميع احتياجاتك الصحية',
+              'footer.quickLinks': 'روابط سريعة',
+              'footer.about': 'عن الشركة',
+              'footer.contact': 'اتصل بنا',
+              'footer.privacy': 'سياسة الخصوصية',
+              'footer.terms': 'الشروط والأحكام',
+              'footer.customerService': 'خدمة العملاء',
+              'footer.returns': 'سياسة الإرجاع',
+              'footer.payment': 'طرق الدفع',
+              'footer.shipping': 'التوصيل والشحن',
+              'footer.faq': 'الأسئلة الشائعة',
+              'footer.followUs': 'تابعنا',
+              'footer.copyright': 'جميع الحقوق محفوظة.',
+              'alert.addedToCart': 'تمت الإضافة إلى السلة بنجاح!'
+            },
+            en: {
+              'nav.language': 'عربي',
+              'nav.login': 'Login',
+              'hero.title': 'Your Trusted Medical Store',
+              'hero.subtitle': 'Get all your medical needs at the best prices with fast delivery',
+              'hero.search': 'Search for medical products...',
+              'categories.title': 'Main Categories',
+              'products.title': 'Featured Products',
+              'products.addToCart': 'Add to Cart',
+              'products.requiresRx': 'Requires Prescription',
+              'products.egp': 'EGP',
+              'features.delivery.title': 'Fast Delivery',
+              'features.delivery.desc': 'Delivery within 24-48 hours in Cairo and Giza',
+              'features.authentic.title': 'Authentic Products',
+              'features.authentic.desc': 'All products are 100% authentic and certified',
+              'features.support.title': 'Continuous Support',
+              'features.support.desc': 'Support team available 24/7',
+              'footer.company': 'Medicum Egypt',
+              'footer.tagline': 'Your trusted medical store for all your health needs',
+              'footer.quickLinks': 'Quick Links',
+              'footer.about': 'About Us',
+              'footer.contact': 'Contact Us',
+              'footer.privacy': 'Privacy Policy',
+              'footer.terms': 'Terms & Conditions',
+              'footer.customerService': 'Customer Service',
+              'footer.returns': 'Return Policy',
+              'footer.payment': 'Payment Methods',
+              'footer.shipping': 'Delivery & Shipping',
+              'footer.faq': 'FAQ',
+              'footer.followUs': 'Follow Us',
+              'footer.copyright': 'All rights reserved.',
+              'alert.addedToCart': 'Added to cart successfully!'
+            }
+          };
+
+          // Update all translatable elements
+          function updateTranslations() {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+              const key = element.getAttribute('data-translate');
+              const translation = translations[currentLanguage][key];
+              if (translation) {
+                if (element.tagName === 'INPUT' && element.type === 'text') {
+                  element.placeholder = translation;
+                } else {
+                  element.textContent = translation;
+                }
+              }
+            });
+          }
 
           // Load categories
           async function loadCategories() {
@@ -244,23 +329,33 @@ app.get('/', (c) => {
               const products = response.data.products;
               const grid = document.getElementById('products-grid');
               
-              grid.innerHTML = products.map(product => \`
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
-                  <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-pills text-6xl text-gray-400"></i>
-                  </div>
-                  <div class="p-4">
-                    <h3 class="font-bold text-sm mb-2">\${currentLanguage === 'ar' ? product.name_ar : product.name_en}</h3>
-                    <div class="flex justify-between items-center mb-3">
-                      <span class="text-2xl font-bold text-blue-900">\${product.price} جنيه</span>
-                      \${product.prescription_required ? '<span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">يتطلب روشتة</span>' : ''}
+              const egpLabel = translations[currentLanguage]['products.egp'];
+              const addToCartLabel = translations[currentLanguage]['products.addToCart'];
+              const requiresRxLabel = translations[currentLanguage]['products.requiresRx'];
+              
+              grid.innerHTML = products.map(product => {
+                const productName = currentLanguage === 'ar' ? product.name_ar : product.name_en;
+                const rxBadge = product.prescription_required ? 
+                  \`<span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">\${requiresRxLabel}</span>\` : '';
+                
+                return \`
+                  <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                      <i class="fas fa-pills text-6xl text-gray-400"></i>
                     </div>
-                    <button onclick="addToCart('\${product.id}')" class="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-800 transition">
-                      <i class="fas fa-cart-plus"></i> أضف للسلة
-                    </button>
+                    <div class="p-4">
+                      <h3 class="font-bold text-sm mb-2">\${productName}</h3>
+                      <div class="flex justify-between items-center mb-3">
+                        <span class="text-2xl font-bold text-blue-900">\${product.price} \${egpLabel}</span>
+                        \${rxBadge}
+                      </div>
+                      <button onclick="addToCart('\${product.id}')" class="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-800 transition">
+                        <i class="fas fa-cart-plus"></i> \${addToCartLabel}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              \`).join('');
+                \`;
+              }).join('');
             } catch (error) {
               console.error('Failed to load products:', error);
             }
@@ -271,6 +366,7 @@ app.get('/', (c) => {
             currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
             document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = currentLanguage;
+            updateTranslations();
             loadCategories();
             loadProducts();
           }
@@ -298,7 +394,7 @@ app.get('/', (c) => {
               );
               
               updateCartCount();
-              alert('تمت الإضافة إلى السلة بنجاح!');
+              alert(translations[currentLanguage]['alert.addedToCart']);
             } catch (error) {
               console.error('Failed to add to cart:', error);
             }
@@ -388,4 +484,4 @@ app.get('/admin', (c) => {
   `);
 });
 
-export default app;
+export default app;p;

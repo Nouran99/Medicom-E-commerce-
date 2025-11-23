@@ -5,11 +5,11 @@ import * as XLSX from 'xlsx';
 
 export const importRoutes = new Hono<{ Bindings: Env }>();
 
-// Apply admin auth to all import routes
-importRoutes.use('*', adminAuth);
+// Apply admin auth to all import routes - only for /api/import/* paths
+importRoutes.use('/api/import/*', adminAuth);
 
 // Import products from Excel/CSV
-importRoutes.post('/products', async (c) => {
+importRoutes.post('/api/import/products', async (c) => {
   try {
     const formData = await c.req.formData();
     const file = formData.get('file') as File;
@@ -68,7 +68,7 @@ importRoutes.post('/products', async (c) => {
 });
 
 // Get import template
-importRoutes.get('/template', (c) => {
+importRoutes.get('/api/import/template', (c) => {
   const templateData = [
     {
       'SKU': 'MED001',
@@ -99,7 +99,7 @@ importRoutes.get('/template', (c) => {
 });
 
 // Manual product import
-importRoutes.post('/product', async (c) => {
+importRoutes.post('/api/import/product', async (c) => {
   try {
     const body = await c.req.json();
     const supabase = getSupabaseAdmin(c);
