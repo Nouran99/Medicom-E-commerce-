@@ -7,6 +7,23 @@ import { Hono } from 'hono';
 import { createClient } from '@supabase/supabase-js';
 import type { Env } from '../lib/supabase';
 
+type AlertSeverity = 'critical' | 'warning' | 'info';
+
+type InventoryAlert = {
+  type: 'out_of_stock' | 'low_stock' | 'expiring_soon';
+  severity: AlertSeverity;
+  product_id: string;
+  product_code: string;
+  product_name: string;
+  message: string;
+  message_ar: string;
+  created_at: string;
+  stock_quantity?: number;
+  alert_level?: number;
+  expiry_date?: string;
+  days_until_expiry?: number;
+};
+
 const inventoryRoutes = new Hono<{ Bindings: Env }>();
 
 /**
@@ -102,7 +119,7 @@ inventoryRoutes.get('/api/admin/inventory/alerts', async (c) => {
     const { env } = c;
     const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY);
     
-    const alerts = [];
+    const alerts: InventoryAlert[] = [];
     
     // Out of stock alerts
     const { data: outOfStock } = await supabase

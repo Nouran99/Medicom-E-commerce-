@@ -16,6 +16,8 @@ export interface Env {
   APP_URL: string;
   ADMIN_EMAIL: string;
   ENVIRONMENT: string;
+  ALLOWED_ORIGINS?: string;
+  DEMO_MODE?: string;
 }
 
 export function getSupabaseClient(c: Context<{ Bindings: Env }>) {

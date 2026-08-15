@@ -9,9 +9,11 @@ export class AuthService {
     this.c = c;
   }
 
-  // Generate 6-digit OTP
+  // Generate a six-digit OTP with the platform cryptographic random source.
   generateOTP(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    const buffer = new Uint32Array(1);
+    crypto.getRandomValues(buffer);
+    return String((buffer[0] % 900_000) + 100_000);
   }
 
   // Send OTP via SMS using Twilio
@@ -94,8 +96,8 @@ export class AuthService {
         const sent = await this.sendOTPviaSMS(identifier, otp);
         if (!sent) throw new Error('Failed to send SMS');
       } else {
-        // Email sending would be implemented here
-        console.log(`Email OTP for ${identifier}: ${otp}`);
+        // Do not log authentication codes. Add an approved email provider before enabling this channel.
+        throw new Error('Email OTP delivery is not configured');
       }
 
       return { success: true, message: 'OTP sent successfully' };

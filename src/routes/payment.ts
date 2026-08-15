@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { getSupabaseAdmin, type Env } from '../lib/supabase';
 import { jwtAuth } from '../middleware/auth';
 import { createHash } from 'crypto';

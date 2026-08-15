@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { serveStatic } from 'hono/cloudflare-workers';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { authRoutes } from './routes/auth';
 import { productsRoutes } from './routes/products';
 import { cartRoutes } from './routes/cart';
@@ -17,9 +17,14 @@ import type { Env } from './lib/supabase';
 
 const app = new Hono<{ Bindings: Env }>();
 
-// Enable CORS for all API routes
+// Restrict cross-origin API access to explicitly configured clients.
+const defaultAllowedOrigins = 'http://localhost:3000,http://localhost:5173';
 app.use('/api/*', cors({
-  origin: '*',
+  origin: (origin, c) => {
+    const configuredOrigins = c.env.ALLOWED_ORIGINS || defaultAllowedOrigins;
+    const allowedOrigins = configuredOrigins.split(',').map((value: string) => value.trim());
+    return allowedOrigins.includes(origin) ? origin : undefined;
+  },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -39,7 +44,7 @@ app.route('/api/admin', adminRoutes);
 app.route('/api/prescriptions', prescriptionRoutes);
 app.route('/api/payment', paymentRoutes);
 app.route('/api/notifications', notificationRoutes);
-app.route('', importRoutes); // Mount import routes at root level
+app.route('/api/admin/import', importRoutes); // Scope privileged import routes to their admin API prefix
 app.route('', productManagementRoutes); // Mount product management routes at root level
 
 // Page routes
@@ -47,10 +52,13 @@ app.route('', pageRoutes);
 
 // Health check endpoint
 app.get('/api/health', (c) => {
-  return c.json({ 
-    status: 'healthy', 
+  return c.json({
+    status: 'healthy',
+    service: 'medicom-egypt',
+    version: '1.1.0',
     timestamp: new Date().toISOString(),
-    environment: c.env.ENVIRONMENT || 'development'
+    environment: c.env.ENVIRONMENT || 'development',
+    mode: c.env.DEMO_MODE === 'true' ? 'demo' : 'live',
   });
 });
 
@@ -71,6 +79,9 @@ app.get('/', (c) => {
         </style>
     </head>
     <body class="bg-gray-50">
+        <aside id="demo-mode-banner" class="hidden bg-amber-50 border-b border-amber-200 text-amber-950 px-4 py-3 text-center text-sm" role="status">
+          <strong>Portfolio demo:</strong> this experience uses a curated local catalog and browser-only cart. Connect Supabase and set <code>DEMO_MODE=false</code> to use live data.
+        </aside>
         <!-- Header -->
         <nav class="bg-white shadow-lg sticky top-0 z-50">
           <div class="container mx-auto px-4">

@@ -122,7 +122,7 @@ export class ExcelImporter {
         side_effects: row.side_effects || null,
         contraindications: row.contraindications || null,
         storage_conditions: row.storage_conditions || null,
-        expiry_date: this.parseDate(row.expiry_date),
+        expiry_date: this.parseDate(row.expiry_date) ?? undefined,
         batch_number: row.batch_number || null,
         seller_code: row.seller_code || '',
         delivery_method: row.delivery_method || 'standard',
@@ -141,7 +141,7 @@ export class ExcelImporter {
         meta_description: row.meta_description || null,
         is_featured: this.parseBoolean(row.is_featured),
         is_active: this.parseBoolean(row.is_active),
-        weight_grams: parseInt(row.weight_grams) || null,
+        weight_grams: Number.isFinite(Number(row.weight_grams)) ? Number.parseInt(row.weight_grams, 10) : undefined,
         dimensions_cm: row.dimensions_cm || null
       };
       

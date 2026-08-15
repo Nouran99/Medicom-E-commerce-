@@ -86,10 +86,34 @@ const translations = {
   }
 };
 
-// Current language
+// Current language and portfolio demo state
 let currentLanguage = localStorage.getItem('language') || 'ar';
 let cart = [];
 let user = null;
+let isDemoMode = false;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>'\"]/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  })[character]);
+}
+
+function getDemoCart() {
+  try {
+    return JSON.parse(localStorage.getItem('medicom_demo_cart') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function updateDemoBanner() {
+  const banner = document.getElementById('demo-mode-banner');
+  if (banner) banner.classList.toggle('hidden', !isDemoMode);
+}
 
 // Initialize language
 function initializeLanguage() {
@@ -157,14 +181,21 @@ async function loadCategories() {
     const grid = document.getElementById('categories-grid');
     
     if (grid) {
-      grid.innerHTML = categories.map(cat => `
-        <div class="text-center cursor-pointer hover:transform hover:scale-105 transition" onclick="filterByCategory('${cat.id}')">
-          <div class="bg-white rounded-lg p-4 shadow-md mb-2">
-            <i class="fas fa-pills text-3xl text-blue-900"></i>
-          </div>
-          <p class="text-sm font-medium">${currentLanguage === 'ar' ? cat.name_ar : cat.name_en}</p>
-        </div>
-      `).join('');
+      grid.innerHTML = categories.map((category) => {
+        const categoryId = escapeHTML(category.id);
+        const categoryName = escapeHTML(currentLanguage === 'ar' ? category.name_ar : category.name_en);
+        return `
+          <button type="button" class="text-center hover:transform hover:scale-105 transition focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg" onclick="filterByCategory('${categoryId}')">
+            <span class="block bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 shadow-md mb-2 border border-blue-100">
+              <svg class="w-8 h-8 mx-auto text-blue-900" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <rect x="4" y="4" width="40" height="40" rx="12" fill="currentColor" opacity="0.12"/>
+                <path d="M20 13h8v7h7v8h-7v7h-8v-7h-7v-8h7v-7Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="text-sm font-medium">${categoryName}</span>
+          </button>
+        `;
+      }).join('');
     }
   } catch (error) {
     console.error('Failed to load categories:', error);
@@ -175,32 +206,39 @@ async function loadCategories() {
 async function loadProducts() {
   try {
     const response = await axios.get(`/api/products?limit=10&lang=${currentLanguage}`);
-    const products = response.data.products;
+    const products = response.data.products || [];
+    isDemoMode = response.data.mode === 'demo';
+    updateDemoBanner();
     const grid = document.getElementById('products-grid');
     
     if (grid) {
-      grid.innerHTML = products.map(product => `
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
-          <div class="h-48 bg-gray-200 flex items-center justify-center">
-            <i class="fas fa-pills text-6xl text-gray-400"></i>
-          </div>
-          <div class="p-4">
-            <h3 class="font-bold text-sm mb-2">${currentLanguage === 'ar' ? product.name_ar : product.name_en}</h3>
-            <div class="flex justify-between items-center mb-3">
-              <span class="text-2xl font-bold text-blue-900">
-                ${product.price} ${translations[currentLanguage]['product.price']}
-              </span>
-              ${product.prescription_required ? 
-                `<span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
-                  ${translations[currentLanguage]['product.prescription']}
-                </span>` : ''}
+      grid.innerHTML = products.map((product) => {
+        const productId = escapeHTML(product.id);
+        const productName = escapeHTML(currentLanguage === 'ar' ? product.name_ar : product.name_en);
+        const price = Number(product.price || 0).toFixed(2);
+        return `
+          <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition border border-slate-100">
+            <div class="h-48 bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-600 flex items-center justify-center relative overflow-hidden" aria-hidden="true">
+              <svg class="w-24 h-24 text-white drop-shadow-lg" viewBox="0 0 120 120" fill="none">
+                <circle cx="60" cy="60" r="54" fill="white" opacity="0.12"/>
+                <path d="M42 31h36v20h20v18H78v20H42V69H22V51h20V31Z" fill="white"/>
+                <path d="m73 74 18-18 10 10-18 18-10-10Z" fill="#8BE3F5"/>
+              </svg>
+              <span class="absolute bottom-3 right-3 left-3 text-xs text-white/90 font-medium">${escapeHTML(currentLanguage === 'ar' ? product.categories?.name_ar : product.categories?.name_en)}</span>
             </div>
-            <button onclick="addToCart('${product.id}')" class="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-800 transition">
-              <i class="fas fa-cart-plus"></i> ${translations[currentLanguage]['btn.addToCart']}
-            </button>
-          </div>
-        </div>
-      `).join('');
+            <div class="p-4">
+              <h3 class="font-bold text-sm mb-2">${productName}</h3>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-2xl font-bold text-blue-900">${price} ${translations[currentLanguage]['product.price']}</span>
+                ${product.prescription_required ? `<span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">${translations[currentLanguage]['product.prescription']}</span>` : ''}
+              </div>
+              <button type="button" onclick="addToCart('${productId}')" class="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-800 transition">
+                <i class="fas fa-cart-plus"></i> ${translations[currentLanguage]['btn.addToCart']}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
     }
   } catch (error) {
     console.error('Failed to load products:', error);
@@ -219,6 +257,17 @@ async function loadProducts() {
 // Add to cart
 async function addToCart(productId) {
   try {
+    if (isDemoMode) {
+      const demoCart = getDemoCart();
+      const existing = demoCart.find((item) => item.product_id === productId);
+      if (existing) existing.quantity += 1;
+      else demoCart.push({ product_id: productId, quantity: 1 });
+      localStorage.setItem('medicom_demo_cart', JSON.stringify(demoCart));
+      updateCartCount();
+      showNotification(currentLanguage === 'ar' ? 'تمت الإضافة إلى سلة العرض بنجاح!' : 'Added to the demo cart!');
+      return;
+    }
+
     const token = localStorage.getItem('auth_token');
     if (!token) {
       openAuth();
@@ -231,31 +280,28 @@ async function addToCart(productId) {
     );
     
     updateCartCount();
-    showNotification(
-      currentLanguage === 'ar' ? 'تمت الإضافة إلى السلة بنجاح!' : 'Added to cart successfully!'
-    );
+    showNotification(currentLanguage === 'ar' ? 'تمت الإضافة إلى السلة بنجاح!' : 'Added to cart successfully!');
   } catch (error) {
     console.error('Failed to add to cart:', error);
-    showNotification(
-      currentLanguage === 'ar' ? 'فشل إضافة المنتج' : 'Failed to add product',
-      'error'
-    );
+    showNotification(currentLanguage === 'ar' ? 'فشل إضافة المنتج' : 'Failed to add product', 'error');
   }
 }
 
 // Update cart count
 async function updateCartCount() {
   try {
+    const cartBadge = document.getElementById('cart-count');
+    if (isDemoMode) {
+      const itemCount = getDemoCart().reduce((total, item) => total + Number(item.quantity || 0), 0);
+      if (cartBadge) cartBadge.textContent = String(itemCount);
+      return;
+    }
+
     const token = localStorage.getItem('auth_token');
     if (token) {
-      const response = await axios.get('/api/cart', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get('/api/cart', { headers: { Authorization: `Bearer ${token}` } });
       const itemCount = response.data.items?.length || 0;
-      const cartBadge = document.getElementById('cart-count');
-      if (cartBadge) {
-        cartBadge.textContent = itemCount;
-      }
+      if (cartBadge) cartBadge.textContent = String(itemCount);
     }
   } catch (error) {
     console.error('Failed to update cart count:', error);

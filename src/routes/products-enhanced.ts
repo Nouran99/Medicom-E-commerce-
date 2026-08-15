@@ -76,10 +76,9 @@ productsEnhancedRoutes.get('/', async (c) => {
     // Increment view count for each product (in background)
     if (products && products.length > 0) {
       const productIds = products.map(p => p.id);
-      supabase
+      void supabase
         .rpc('increment_view_count', { product_ids: productIds })
-        .then(() => {})
-        .catch(() => {});
+        .then(() => undefined, () => undefined);
     }
     
     return c.json({

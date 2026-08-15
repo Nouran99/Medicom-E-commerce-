@@ -1,33 +1,29 @@
-# prod
+# Dependencies and build output
+node_modules/
 dist/
+coverage/
+playwright-report/
+test-results/
 
-# dev
-.yarn/
-!.yarn/releases
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# Tooling and editor state
 .vscode/*
 !.vscode/launch.json
 !.vscode/*.code-snippets
-.idea/workspace.xml
-.idea/usage.statistics.xml
-.idea/shelf
+.idea/
+.wrangler/
+.railway/
 
-# deps
-node_modules/
-.wrangler
-
-# env
-.env
-.env.production
-.dev.vars
-
-# logs
+# Logs and temporary files
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-# misc
 .DS_Store

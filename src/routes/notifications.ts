@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { getSupabaseAdmin, type Env } from '../lib/supabase';
 
 export const notificationRoutes = new Hono<{ Bindings: Env }>();
